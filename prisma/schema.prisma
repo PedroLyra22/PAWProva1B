@@ -1,0 +1,42 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Paciente {
+  id               Int       @id @default(autoincrement())
+  nomePaciente     String
+  senha            Int
+  usuario          String
+  consultas        Consulta[]
+  secretariaId     Int?
+  secretaria       Secretaria? @relation(fields: [secretariaId], references: [id])
+}
+
+model Secretaria {
+  id          Int         @id @default(autoincrement())
+  nome        String @unique
+  RG          Int
+  pacientes   Paciente[]
+  consultas   Consulta[]
+  agendas     Agenda[]    @relation("secretaria_agendas")
+}
+
+model Consulta {
+  id          Int       @id @default(autoincrement())
+  data        DateTime
+  nomePcnt    String
+  nomeDents   String
+  pacienteId  Int?
+  secretariaId Int?
+  paciente    Paciente? @relation(fields: [pacienteId], references: [id])
+  secretaria  Secretaria? @relation(fields: [secretariaId], references: [id])
+  @@map(name: "consultas")
+}
+
+model Agenda {
+  id          Int         @id @default(autoincrement())
+  data        DateTime
+  nomePcnt    String
+  secretaria  Secretaria  @relation("secretaria_agendas", fields: [nomePcnt], references: [nome])
+}
